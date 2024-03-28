@@ -1,7 +1,8 @@
 __all__ = [
-    "errores",
+    "abstracto",
+    "diccionario",
+    "error",
+    "etiqueta",
     "lexema",
-    "base",
-    "token",
-    "numero"
+    "token"
 ]

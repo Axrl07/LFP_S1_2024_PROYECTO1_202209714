@@ -24,18 +24,3 @@ Texto : { fuente = Arial ; color = azul ; tamaÃ±o = 11 ; } ,
 Codigo : { texto : Muestra el texto con fuente de codigo de ordenador. ; posicion : centro ; } ,
 Negrita : { texto : Este texto aparecerÃ¡ en negrita. ; } ,
 Titulo : { texto : Este es un titulo ; posicion : izquierda ; tamaÃ±o : t1 ; color : rojo ; }
-
-color {'Titulo': '{', 'texto': 'Este es un titulo', 'posicion': 'izquierda', 'tamaÃ±o': 't1', 'color': 'rojo'}
-color {'Fondo': '{', 'color': 'cyan'}
-posicion {'Parrafo': '{', 'texto': 'Este es un parrafo de ejemplo.', 'posicion': 'izquierda'}
-color {'Texto': '{'}
-posicion {'Codigo': '{', 'texto': 'Muestra el texto con fuente de codigo de ordenador.', 'posicion': 'centro'}
-Negrita {'Negrita': '{', 'texto': 'Este texto aparecerÃ¡ en negrita.'}
-Subrayado {'Subrayado': '{', 'texto': 'Este texto aparecerÃ¡ Subrayado.'}
-Tachado {'Tachado': '{', 'texto': 'Este texto aparecerÃ¡ tachado.'}
-Cursiva {'Cursiva': '{', 'texto': 'Este texto aparecerÃ¡ en cursiva.'}
-cantidad {'Salto': '{', 'cantidad': '5'}
-elemento {'Tabla': '{', 'filas': '4', 'columnas': '3', 'elemento': {'fila': '2', 'contenido': 'fila', 'columna': 'Texto mostrado en fila 1 columna 2'}}
-color {'Texto': '{'}
-posicion {'Codigo': '{', 'texto': 'Muestra el texto con fuente de codigo de ordenador.', 'posicion': 'centro'}
-Negrita {'Negrita': '{', 'texto': 'Este texto aparecerÃ¡ en negrita.'}

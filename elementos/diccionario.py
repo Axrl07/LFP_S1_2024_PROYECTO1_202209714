@@ -40,6 +40,3 @@ reservadas = {
     ']'                   :   ']',
     ','                   :   ','
 }
-
-# creando palabras clave y si respectiva definición en HTML
-

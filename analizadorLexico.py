@@ -8,7 +8,7 @@ from elementos.token import Token
 from elementos.etiqueta import Etiqueta
 
 # importando diccionario de palabras clave y de traduccion
-from elementos.diccionario import reservadas
+from elementos.diccionario import *
 
 class Analizador():
     
@@ -21,6 +21,7 @@ class Analizador():
         self.listadoErrores = []
         self.listadoTokens = []
         self.etiquetas = []
+        self.html = ""
 
     # analizador lexico
     def analizar_entrada(self,cadena):
@@ -451,68 +452,94 @@ class Analizador():
     
     def crearEtiquetas(self,listado):
         diccionario = {}
-        posiciones = 0
         nombreEtiqueta = ""
+        nombreAtributo = ""
+        posiciones = 0
+        numerador = 0
         valores = []
-
         while listado:
-            listado = listado[posiciones:]
-            actual = listado[0]
-            if actual.isalpha():
-                if actual == reservadas.get(actual.upper(),None):
-                    nombreEtiqueta = actual
-            if len(listado) > 2:
-                siguiente = listado[1]
-                posterior = listado[2]
+            actual = listado[posiciones]
             posiciones += 1
-            i = actual + siguiente
-            
-            if i != ";}":
+            siguiente= ""
+            if actual.isalpha():
+                if actual[0].isupper():
+                    if actual == reservadas.get(actual.upper(),None):
+                        nombreEtiqueta = actual
+            if len(listado) > posiciones:
+                siguiente = listado[posiciones]
+                  
+            if actual+siguiente != "}," and actual+siguiente != "}]":
                 if actual == "elemento" and siguiente == ":":
-                    listadoAux = listado[listado.index(posterior)+1:]
+                    indice1 = listado.index(siguiente)
+                    listadoAux = listado[indice1+1:]
+                    posAux = 0
                     for j in listadoAux:
                         posiciones += 1
-                        if j != "}":
-                            if j != ":":
+                        posAux += 1
+                        j_siguiente = listadoAux[posAux]
+                        if j+j_siguiente != "};":
+                            if j != ":" and j != "{":
                                 valores.append(j)
                             else:
                                 continue
                         else:
                             diccionarioAux = {}
-                            posAux = 0
-                            for k in valores:
-                                if k != ",":
-                                    if k == "fila":
-                                        diccionarioAux[k] = valores[posAux+1]
-                                    elif k == "columna":
-                                        diccionarioAux[k] = valores[posAux+1]
+                            for k in enumerate(valores):
+                                index, elemento = k
+                                if elemento != ",":
+                                    if elemento == "fila":
+                                        diccionarioAux[elemento] = valores[index+1]
+                                    elif elemento == "columna":
+                                        diccionarioAux[elemento] = valores[index+1]
                                     else:
-                                        diccionarioAux["contenido"] = valores[posAux]
-                                    posAux += 1
+                                        diccionarioAux["contenido"] = elemento
                                 else:
                                     continue
-                            diccionario[actual] = diccionarioAux
-                            listado = listado[posiciones:]
+                            diccionario[actual+str(numerador)] = diccionarioAux
+                            listado = listado[posiciones+2:]
                             posiciones = 0
+                            numerador += 1
                             break
-                elif siguiente == ":":
-                    diccionario[actual] = posterior
-                    listado = listado[posiciones+2:]
+                elif siguiente == ":" or siguiente == "=":
+                    if actual == "texto":
+                        nombreAtributo = actual
+                        listado = listado[posiciones+1:]
+                        posiciones = 0
+                    elif reservadas.get(actual.upper(),None)[0].isupper():
+                        nombreEtiqueta = actual
+                        listado = listado[posiciones+2:]
+                        posiciones = 0
+                    elif reservadas.get(actual.upper(),None)[0].islower():
+                        nombreAtributo = actual
+                        listado = listado[posiciones+1:]
+                        posiciones = 0
+                elif actual == ";" or actual == ",":
+                    listado = listado[posiciones+1:]
                     posiciones = 0
                 else:
-                    listado = listado[posiciones:]
+                    diccionario[nombreAtributo] = actual
+                    listado = listado[posiciones+1:]
                     posiciones = 0
                     continue
             else:
                 e = Etiqueta(nombreEtiqueta)
-                e.diccionario = diccionario
+                e.atributos = diccionario
                 self.etiquetas.append(e)
-                listado = listado[posiciones+2:]
+                
+                listado = listado[posiciones+1:]
                 posiciones = 0
+                numerador = 0
                 diccionario = {}
-                nombreEtiqueta = ""
                 valores = []
     
+    def exportandoEtiquetas(self, head):
+        self.html += f'<!DOCTYPE html>\n'
+        self.html += f'<html>\n'
+        self.html += head
+        self.html += "AQUI VA TODO EL CONTENIDO"
+        self.html += f'</body>\n'
+        self.html += f'</html>\n'
+        print(self.html)
     
     # funcion de ejecucion
     def progreso(self, cadena) -> Union[List, str, Tuple[str, List]]:
@@ -555,9 +582,10 @@ class Analizador():
         listadoBloques = self.creandoBloques(listadoAux)
         encabezado = listadoBloques[0]
         cuerpo = listadoBloques[1]
-        
+        cuerpo.append("]")
         self.crearEtiquetas(cuerpo)
-        for i in self.etiquetas:
-            print(i.atributo, i.diccionario)
         
+        # creando html
+        self.exportandoEtiquetas(f'<head>\n<title>{encabezado[2]}</title>\n</head>\n<body>\n')
+
     

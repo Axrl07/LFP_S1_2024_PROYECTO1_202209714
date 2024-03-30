@@ -2,7 +2,7 @@
 from analizadorLexico import Analizador
 
 contenido = open("prueba.json", "r").read()
-x = Analizador().analizar_entrada(contenido)
+x = Analizador().progreso(contenido)
 tipo = type(x)
 
 if tipo == list:

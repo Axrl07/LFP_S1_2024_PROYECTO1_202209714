@@ -7,10 +7,10 @@ class Errores(Expression):
         super().__init__(fila, columna)
         
     def execute(self, num):
-        numero = f'<td align="center">"No.":{num}</td>\n'
-        lexema = f'<td align="center">"Lexema": {self.caracter}</td>\n'
-        fila = f'<td align="center">"Fila": {self.fila}</td>\n'
-        columna = f'<td align="center">"Columna": {self.columna}</td>\n'
+        numero = f'<td align="center">{num}</td>\n'
+        lexema = f'<td align="center">{self.caracter}</td>\n'
+        fila = f'<td align="center">{self.fila}</td>\n'
+        columna = f'<td align="center">{self.columna}</td>\n'
         return f'{numero + lexema + columna + fila}'
     
     def getFila(self):

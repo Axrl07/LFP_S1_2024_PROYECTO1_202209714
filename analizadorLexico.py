@@ -1,7 +1,11 @@
+# import para denotar que una función tiene diferentes tipos de retornos
+from typing import List, Union, Tuple
+
 # importando clases principales
 from elementos.error import Errores
 from elementos.lexema import Lexema
 from elementos.token import Token
+from elementos.etiqueta import Etiqueta
 
 # importando diccionario de palabras clave y de traduccion
 from elementos.diccionario import reservadas
@@ -16,12 +20,13 @@ class Analizador():
         self.listadoLexemas_sinRepetir = []
         self.listadoErrores = []
         self.listadoTokens = []
+        self.etiquetas = []
 
     # analizador lexico
     def analizar_entrada(self,cadena):
         lexema = ""
         puntero = 0
-        # recorriendo la cadena y analizando cada caracter
+        
         while cadena:
             caracter = cadena[puntero]
             puntero += 1
@@ -79,28 +84,11 @@ class Analizador():
                 cadena = cadena[1:] 
                 puntero = 0
         
-        # si hay errores se detiene el analisis
-        detenerse = self.analizarErrores()
-        if type(detenerse) == list:
-            print(detenerse[0], detenerse[1])
-            return detenerse # retorna lista [tiqueta, problema]
-        elif type(detenerse) == str:
-            print(detenerse)
-            return detenerse # retorna mensaje de error y exportacion de errores
-        
-        # si no hay errores se continua con el analisis
-        self.crearTokens()
-        # print("-"*75)
-        # for token in self.listadoLexemas:
-        #     print("lexema: "+token.lexema)
-        # print("fin")
-        
-    def descomponerCadenas(self, cadena) -> list:
-        listadoComponentes = []
+    def descomponerCadenas(self, cadena):
+        valor = ""
         lexema = ""
         puntero = 0
         columna = 0
-        fila = 0
         
         while cadena:
             caracter = cadena[puntero]
@@ -118,52 +106,40 @@ class Analizador():
                     [puntero:puntero+6] = "columna"
                     [puntero+1:puntero+7] = columna
                 '''
-                cadena_fila = cadena[puntero:puntero+5]
-                cadena_colum = cadena[puntero:puntero+8]
-                if cadena_fila == '"fila"':
-                    cadenaInteres = cadena_fila[puntero+1:puntero+4]
-                    print(cadenaInteres)
-                    listadoComponentes.append(cadenaInteres)
-                    cadena = cadena[puntero:puntero+5]
-                    columna += len(cadenaInteres) + 1
-                    puntero = 0
-                elif cadena_colum == '"columna"':
-                    cadenaInteres = cadena_colum[puntero+1:puntero+7]
-                    print(cadenaInteres)
-                    listadoComponentes.append(cadenaInteres)
-                    cadena = cadena[puntero:puntero+8]
-                    columna += len(cadenaInteres) + 1
-                    puntero = 0
-                else:
-                    cadena = cadena[puntero:]
+                if cadena == '"fila"' and len(cadena) == 6:
+                    cadenaInteres = cadena[puntero:puntero+4]
+                    valor = cadenaInteres
+                    cadena = cadena[puntero+4:]
                     puntero = 0
                     columna += 1
+                elif cadena == '"columna"' and len(cadena) == 9:
+                    cadenaInteres = cadena[puntero:puntero+7]
+                    valor = cadenaInteres
+                    cadena = cadena[puntero+7:]
+                    puntero = 0
+                    columna += 1
+                else:
+                    cadena = cadena[1:]
+                    puntero = 0
+                    columna += 1
+            elif caracter.isalpha():
+                lexema, cadena = self.armar_lexema(cadena[puntero-1:],2)
+                if lexema and cadena:
+                    valor = f'"{lexema}"'
+                    columna += len(lexema) + 1
+                    puntero = 0
             elif caracter.isdigit():
-                lexema, cadena = self.armar_lexema(cadena[puntero:],2)
+                lexema, cadena = self.armar_lexema(cadena[puntero-1:],2)
                 if lexema and cadena:
-                    lex = Lexema(lexema, fila, columna)
-                    listadoComponentes.append(lex)
+                    valor = int(lexema)
                     columna += len(lexema) + 1
                     puntero = 0
-            elif caracter == "\n":
-                cadena = cadena[1:] 
-                puntero = 0 
-                fila += 1
-                columna += 1
-            elif caracter == "\t":
-                cadena = cadena[4:] 
-                puntero = 0
-                columna += 4
             else:
-                lexema, cadena = self.armar_lexema(cadena[puntero:],2)
-                if lexema and cadena:
-                    lex = lexema(lexema, fila, columna)
-                    listadoComponentes.append(lex)
-                    columna += len(lexema) + 1
-                    puntero = 0
+                cadena = cadena[1:]
+                puntero = 0
+                columna += 1
+        return valor
                     
-            
-    
     def armar_lexema(self, cadena, analisis=1) -> tuple:
         lexema = ''
         puntero = ''
@@ -180,7 +156,7 @@ class Analizador():
             for caracter in cadena:
                 puntero += caracter
                 if caracter == '\"':
-                    return lexema, cadena[len(puntero):]
+                    return lexema, cadena[len(puntero)-1:]
                 else:
                     lexema += caracter
         return None, None 
@@ -192,14 +168,6 @@ class Analizador():
             if i.lexema == lexema.lexema:
                 return True
         return False
-
-    def imprimir(self, tipo="repetir") -> None:
-        if tipo == "sin repetir":
-            for token in self.listadoLexemas_sinRepetir:
-                print(token.lexema)
-        else:
-            for token in self.listadoLexemas:
-                print(token.lexema)
                 
     # errores
     def getErrores(self) -> str:
@@ -219,17 +187,21 @@ class Analizador():
         return formato
 
     def getErrores2(self) -> list:
-        c1, c2 = 0, 0
+        c1, c2, c3 = 0, 0, 0
         for lexema in self.listadoLexemas:
             if lexema.lexema == "Encabezado":
                 c1 += 1
             elif lexema.lexema == "Cuerpo":
                 c2 += 1
+            elif lexema.lexema == "Inicio":
+                c3 += 1
             else:
                 continue
-        if c1 == 0 or c1 > 1:
+        if c3 == 0 or c3 > 1:
+            return ["Inicio", c3]
+        elif c1 == 0 or c1 > 1:
             return ["Encabezado", c1]
-        if c2 == 0 or c2 > 1:
+        elif c2 == 0 or c2 > 1:
             return ["Cuerpo", c2]
         return None, None
 
@@ -248,46 +220,344 @@ class Analizador():
             archivo.write('</body>\n')
             archivo.write('</html>\n')
 
-    def analizarErrores(self):
+    def analizarErrores(self) -> Union[List, str]:
         erroresLexicos = len(self.listadoErrores)
         if erroresLexicos > 0:
             self.exportarErrores()
             return "errores generados en archivo ListaErrores.html"
+        
+        # verificando etiqueta encabezado y cuerpo
         atributo, problema = self.getErrores2()
         lista = [atributo, problema]
         if atributo != None:
             return lista
-        return None
+        
+        la, lc, ca, cc = 0, 0, 0, 0
+        listadoSignos = ""
+        for signo in self.listadoLexemas:
+            if signo.lexema == "{":
+                la += 1
+                listadoSignos += f'{signo.lexema} , {signo.getFila()} , {signo.getColumna()}'+'\n'
+            elif signo.lexema == "[":
+                ca += 1
+                listadoSignos += f'{signo.lexema} , {signo.getFila()} , {signo.getColumna()}'+'\n'
+            elif signo.lexema == "}":
+                lc += 1
+                listadoSignos += f'{signo.lexema} , {signo.getFila()} , {signo.getColumna()}'+'\n'
+            elif signo.lexema == "]":
+                cc += 1
+                listadoSignos += f'{signo.lexema} , {signo.getFila()} , {signo.getColumna()}'+'\n'
+            else:
+                continue
+        llaves = la == lc
+        corchetes = ca == cc
+        if llaves == True and corchetes == True:
+            return None
+        else:
+            error = f' el simbolo {"{"+" "}aparece {la} veces y el simbolo {"}"+" "} aparece {lc} veces'+'\n'
+            error += f' el simbolo "[" aparece {ca} veces y el simbolo "]" aparece {cc} veces'+'\n'*2
+            error += "Listado de ocurrencias de llaves y corchetes: \n"
+            error += listadoSignos
+            return ["error en la cantidad de llaves y corchetes", error]
 
-    # exportacion de tokens
-    def crearTokens(self):
+    # tokens
+    def getLexema(self, lexema):
+        for i in self.listadoLexemas_sinRepetir:
+            lex = i.lexema[1:len(i.lexema)-1]
+            if lex == lexema:
+                return i
+        return None
+    
+    def crearTokens(self, cadenas=True, listado=[]):
         # primero analizamos las palabras reservadas y separamos de strings y numeros
         global reservadas
         contadorCadenas = 1
-        listadoCadenas = []
-        for lexema in self.listadoLexemas_sinRepetir:
-            if len(lexema.lexema) == 1:
-                if lexema.lexema == reservadas.get(lexema.lexema,None):
+        if cadenas:
+            for lexema in self.listadoLexemas_sinRepetir:
+                if len(lexema.lexema) == 1:
+                    if lexema.lexema == reservadas.get(lexema.lexema,None):
+                        self.listadoTokens.append(
+                            Token("Simbolo", lexema.lexema, lexema.getFila(), lexema.getColumna())
+                        )
+                    continue
+                clave = ""
+                if lexema.lexema == "texto":
+                    clave = lexema.lexema.lower()
+                else:
+                    clave = lexema.lexema.upper()
+                valor = reservadas.get(clave, None)
+                if lexema.lexema == valor and valor != None:
                     self.listadoTokens.append(
-                        Token("Simbolo", lexema.lexema, lexema.getFila(), lexema.getColumna())
+                        Token("Palabra Reservada", lexema.lexema, lexema.getFila(), lexema.getColumna())
                     )
-                    print(lexema.lexema)
-                continue
-            clave = lexema.lexema.upper()
-            valor = reservadas.get(clave, None)
-            if lexema.lexema == valor and valor != None:
-                self.listadoTokens.append(
-                    Token("Palabra Reservada", lexema.lexema, lexema.getFila(), lexema.getColumna())
-                )
-            elif lexema.lexema.isdigit():
-                self.listadoTokens.append(
-                    Token("Numero", lexema.lexema, lexema.getFila(), lexema.getColumna())
-                )
+                elif lexema.lexema.isdigit():
+                    self.listadoTokens.append(
+                        Token("Numero", lexema.lexema, lexema.getFila(), lexema.getColumna())
+                    )
+                else:
+                    self.listadoTokens.append(
+                        Token(f"Cadena no.{contadorCadenas}", lexema.lexema, lexema.getFila(), lexema.getColumna())
+                    )
+                    contadorCadenas += 1
+        else:
+            contadorFilas = 0
+            contadorColumnas = 0
+            for lexema in listado:
+                clave = ""
+                if lexema == "fila":
+                    contadorFilas += 1
+                    clave = lexema.upper()
+                elif lexema == "columna":
+                    contadorColumnas += 1
+                    clave = lexema.upper()
+                else:
+                    clave = lexema
+                if lexema == reservadas.get(clave,None):
+                    if contadorFilas == 1 and len(lexema) == 4:
+                        objeto = self.getLexema(lexema)
+                        tokenAntiguo = None
+                        for elem in self.listadoTokens:
+                            if elem.lexema == objeto.lexema:
+                                tokenAntiguo = elem
+                        tokenAntiguo.id = "Palabra reservada"
+                        tokenAntiguo.lexema = lexema
+                        tokenAntiguo.fila = objeto.getFila() + 1
+                    elif contadorColumnas == 1 and len(lexema) == 7:
+                        objeto = self.getLexema(lexema)
+                        tokenAntiguo = None
+                        for elem in self.listadoTokens:
+                            if elem.lexema == objeto.lexema:
+                                tokenAntiguo = elem
+                        tokenAntiguo.id = "Palabra reservada"
+                        tokenAntiguo.lexema = lexema
+                        tokenAntiguo.fila = objeto.getFila() + 1
+
+    def getTokens(self) -> str:
+        self.listadoErrores
+        formato = '<table align="center" border="black" height="50%" width="50%">\n'
+        formato += '<tr bgcolor="black">\n'
+        formato += '<th><font color="white">Token</font</th>\n'
+        formato += '<th><font color="white">Lexema</font</th>\n'
+        formato += '<th><font color="white">Fila</font</th>\n'
+        formato += '<th><font color="white">Columna</font</th>\n'
+        formato += '</tr>\n' 
+        for i in range(len(self.listadoTokens)):
+            formato += '<tr>\n'
+            token = self.listadoTokens[i]
+            formato += token.execute() + '</tr>\n'
+        formato += '</table>\n'
+        return formato
+    
+    def escribirTokens(self):
+        retorno = ""
+        for i in self.listadoTokens:
+            retorno += i.execute() + "\n"
+        return retorno
+    
+    def exportarTokens(self) -> None:
+        nombre = "ListaTokens"+".html"
+        with open(nombre, 'w') as archivo:
+            archivo.write('<!DOCTYPE html>\n')
+            archivo.write('<html>\n')
+            archivo.write('<head>\n')
+            archivo.write('<title>Errores</title>\n')
+            archivo.write('</head>\n')
+            archivo.write('<body font-size="16">\n')
+            archivo.write('<font size="6">\n')
+            archivo.write(self.getTokens())
+            archivo.write('</font>\n')
+            archivo.write('</body>\n')
+            archivo.write('</html>\n')
+
+    def listadoCadenas(self) -> list:
+        cadenas = []
+        for i in self.listadoLexemas:
+            first_char = i.lexema[0]
+            last_char = i.lexema[-1]
+            condicional = first_char == '\"' and last_char == '\"'
+            if condicional:
+                cadenas.append(i)
             else:
-                self.listadoTokens.append(
-                    Token(f"Cadena no.{contadorCadenas}", lexema.lexema, lexema.getFila(), lexema.getColumna())
-                )
-                contadorCadenas += 1
-                listadoCadenas.append(lexema)
-        return listadoCadenas
+                continue
+        return cadenas
+    
+    # traduccion
+    def armandoBloque(self, listado, tipo="c") -> tuple:
+        bloque = []
+        subBloque = []
+        if tipo == "c":
+            for elemento in listado:
+                el = elemento.lexema
+                if el == '[':
+                    continue
+                elif el == ']':
+                    return bloque
+                else:
+                    bloque.append(el)
+        else:
+            for elemento in listado:
+                el = elemento.lexema
+                if el == '{':
+                    indice = listado.index(elemento)
+                    for elem in listado[indice+1:]:
+                        if elem.lexema == '}':
+                            indice = listado.index(elemento)+1
+                            siguiente = listado[indice].lexema
+                            comparacion = el+siguiente
+                            if comparacion == "};":
+                                bloque.append(subBloque)
+                                break
+                        else:
+                            subBloque.append(elem.lexema)
+                elif el == '}':
+                    indice = listado.index(elemento)+1
+                    siguiente = listado[indice].lexema
+                    if siguiente == ",":
+                        return bloque
+                    elif siguiente== "}":
+                        return bloque
+                else:
+                    bloque.append(el)
+                    
+    def creandoBloques(self, listadoAux) -> list:
+        listadoBloques = []
+        for l in enumerate(listadoAux):
+            index, elem = l
+            lex = elem.lexema
+            clave = ""
+            if lex.isalpha():
+                clave = lex.upper()
+            else:
+                clave = lex
+            if lex == reservadas.get(clave,None):
+                concat = ""
+                if len(listadoAux) > index+2:
+                    concat = lex + listadoAux[index+1].lexema + listadoAux[index+2].lexema
+                comp = lex + ":" + "["
+                comp2 = lex + ":" + "{"
+                if concat == comp:
+                    inicio = index + 2
+                    lis = listadoAux[inicio:]
+                    bloque = self.armandoBloque(lis)
+                    listadoBloques.append(bloque)
+                elif concat == comp2:
+                    inicio = index + 3
+                    lis = listadoAux[inicio:]
+                    bloque = self.armandoBloque(lis,"p")
+                    listadoBloques.append(bloque)
+                else:
+                    continue
+        return listadoBloques
+    
+    def crearEtiquetas(self,listado):
+        diccionario = {}
+        posiciones = 0
+        nombreEtiqueta = ""
+        valores = []
+
+        while listado:
+            listado = listado[posiciones:]
+            actual = listado[0]
+            if actual.isalpha():
+                if actual == reservadas.get(actual.upper(),None):
+                    nombreEtiqueta = actual
+            if len(listado) > 2:
+                siguiente = listado[1]
+                posterior = listado[2]
+            posiciones += 1
+            i = actual + siguiente
+            
+            if i != ";}":
+                if actual == "elemento" and siguiente == ":":
+                    listadoAux = listado[listado.index(posterior)+1:]
+                    for j in listadoAux:
+                        posiciones += 1
+                        if j != "}":
+                            if j != ":":
+                                valores.append(j)
+                            else:
+                                continue
+                        else:
+                            diccionarioAux = {}
+                            posAux = 0
+                            for k in valores:
+                                if k != ",":
+                                    if k == "fila":
+                                        diccionarioAux[k] = valores[posAux+1]
+                                    elif k == "columna":
+                                        diccionarioAux[k] = valores[posAux+1]
+                                    else:
+                                        diccionarioAux["contenido"] = valores[posAux]
+                                    posAux += 1
+                                else:
+                                    continue
+                            diccionario[actual] = diccionarioAux
+                            listado = listado[posiciones:]
+                            posiciones = 0
+                            break
+                elif siguiente == ":":
+                    diccionario[actual] = posterior
+                    listado = listado[posiciones+2:]
+                    posiciones = 0
+                else:
+                    listado = listado[posiciones:]
+                    posiciones = 0
+                    continue
+            else:
+                e = Etiqueta(nombreEtiqueta)
+                e.diccionario = diccionario
+                self.etiquetas.append(e)
+                listado = listado[posiciones+2:]
+                posiciones = 0
+                diccionario = {}
+                nombreEtiqueta = ""
+                valores = []
+    
+    
+    # funcion de ejecucion
+    def progreso(self, cadena) -> Union[List, str, Tuple[str, List]]:
         
+        # literalmente el analizador lexico
+        
+        self.analizar_entrada(cadena)
+        
+        # manejo de errores
+        
+        detenerse = self.analizarErrores()
+        if type(detenerse) == list:
+            # retorna una Lista
+            return detenerse
+        elif type(detenerse) == str:
+            # retorna un string
+            return detenerse
+        
+        # creacion de tokens
+        
+        self.crearTokens()
+        cadenas = self.listadoCadenas()
+        listadoDescomposiciones = []
+        for c in cadenas:
+            valor = self.descomponerCadenas(c.lexema)
+            listadoDescomposiciones.append(valor)
+        self.crearTokens(False, listadoDescomposiciones)
+        self.exportarTokens()
+        
+        # comienzo de traducción de datos
+        
+        listadoAux = self.listadoLexemas[3:len(self.listadoLexemas)-1]
+        for l in listadoAux:
+            if l.lexema[0] == '\"':
+                longitud = len(l.lexema) - 1
+                cadenaTexto = l.lexema[1:longitud]
+                l.lexema = cadenaTexto
+        
+        # obteniendo bloques de datos
+        listadoBloques = self.creandoBloques(listadoAux)
+        encabezado = listadoBloques[0]
+        cuerpo = listadoBloques[1]
+        
+        self.crearEtiquetas(cuerpo)
+        for i in self.etiquetas:
+            print(i.atributo, i.diccionario)
+        
+    

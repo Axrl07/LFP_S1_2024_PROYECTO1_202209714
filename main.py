@@ -46,9 +46,12 @@ class Ventana():
         self.area_entrada.delete("1.0", "end")
         self.area_entrada.insert("1.0", str(self.data[2]))
 
-    def abrir_ventanaErrores(self, errores):
+    def ventanMensaje(self, contenido, advertencia="error"):
         ventana = tk.Tk()
-        ventana.title("Errores")
+        if advertencia == "error":
+            ventana.title("Errores")
+        else:
+            ventana.title("Mensaje")
 
         # Centrar la ventana de errores
         ancho_ventana = ventana.winfo_reqwidth()
@@ -64,11 +67,14 @@ class Ventana():
         fuente = font.Font(size=12)
         negrita = font.Font(size=12, weight="bold")
         
-        enunciado = tk.Label(ventana, text=errores, font=negrita)
+        enunciado = tk.Label(ventana, text=contenido, font=negrita)
         enunciado.pack(expand=True, fill="both")
         
-        enunciado2 = tk.Label(ventana, text=f"Verifica el archivo de entrada {self.data[1]}", font=fuente)
-        enunciado2.pack(expand=True, fill="both")
+        if advertencia == "error":
+            enunciado2 = tk.Label(ventana, text=f"Verifica el archivo de entrada {self.data[1]}", font=fuente)
+            enunciado2.pack(expand=True, fill="both")
+        else:
+            pass
 
         ventana.mainloop()
 
@@ -76,7 +82,7 @@ class Ventana():
         entrada = len(str(self.area_entrada.get("1.0", "end")))
         
         if entrada <= 5:
-           return self.abrir_ventanaErrores("No hay contenido para traducir")
+           return self.ventanMensaje("No hay contenido para traducir")
         else:
             # configurando contenido
             aux, nombre, contenidoArchivo = self.data
@@ -88,14 +94,38 @@ class Ventana():
             else:
                 contenido = contenidoArchivo
             # analizandor lexico
-            ejecucion = Analizador().analizar_entrada(contenido)
+            ejecucion = Analizador().progreso(contenido)
             if type(ejecucion) == list:
                 self.area_entrada.delete("1.0", "end")
-                self.abrir_ventanaErrores(f'Error la etiqueta {ejecucion[0]} se repite {ejecucion[1]} veces en el archivo')
+                self.area_salida.config(state="normal")
+                self.area_salida.delete("1.0", "end")
+                self.area_salida.insert("1.0", "Error")
+                self.area_salida.config(state="disabled")
+                if ejecucion[0] != "Encabezado" and ejecucion[0] != "Cuerpo" and ejecucion[0] != "Inicio":
+                    er, con = ejecucion
+                    self.area_salida.config(state="normal")
+                    self.area_salida.delete("1.0", "end")
+                    self.area_salida.insert("1.0", con)
+                    self.area_salida.config(state="disabled")
+                    self.ventanMensaje(er)
+                else:
+                    self.ventanMensaje(f'Error la etiqueta {ejecucion[0]} se repite {ejecucion[1]} veces en el archivo')
                 del ejecucion
             elif ejecucion == "errores generados en archivo ListaErrores.html":
                 self.area_entrada.delete("1.0", "end")
-                self.abrir_ventanaErrores(ejecucion)
+                self.area_salida.config(state="normal")
+                self.area_salida.delete("1.0", "end")
+                self.area_salida.insert("1.0", "Errores generados en archivo ListaErrores.html")
+                self.area_salida.config(state="disabled")
+                self.ventanMensaje(ejecucion)
+                del ejecucion
+            else:
+                men, con = ejecucion
+                self.area_salida.config(state="normal")
+                self.area_salida.delete("1.0", "end")
+                self.area_salida.insert("1.0", con)
+                self.area_salida.config(state="disabled")
+                self.ventanMensaje(men, "men")
                 del ejecucion
     
 if __name__ == "__main__":

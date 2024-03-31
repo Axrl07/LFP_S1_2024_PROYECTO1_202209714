@@ -14,34 +14,3 @@ Texto --> {'fuente': 'Arial', 'color': 'azul', 'tamaÃ±o': '11'}
 Codigo --> {'texto': 'Muestra el texto con fuente de codigo de ordenador.', 'posicion': 'centro'}
 Negrita --> {'texto': 'Este texto aparecerÃ¡ en negrita.'}
 Titulo --> {'texto': 'Este es un titulo', 'posicion': 'izquierda', 'tamaÃ±o': 't1', 'color': 'rojo'}
-
-
-Tabla = <table align="center" border="black" height="300" width="70%">
-    filas = 4 => <tr>
-    columnas = 3 <td>
-    elementos = contenido {f1, col1}
-        contenido
-    
-    listado:
-
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <table>

@@ -97,6 +97,32 @@ class Etiqueta():
 									etiqueta += ">" + contenido + "</" + traduccion.get(self.nombre.upper(),None) + ">"
 									break
 			else:
-				# codigo para crear la tabla
-				print("tabla")
+				# Leer el número de filas y columnas
+				num_filas = int(self.atributos['filas'])
+				num_columnas = int(self.atributos['columnas'])
+
+				# Iniciar el código HTML de la tabla
+				tabla_html = '<table align="center" border="black" height="300" width="85%">\n'
+
+				# Recorrer las filas y columnas para construir la tabla
+				for i in range(num_filas):
+					tabla_html += '<tr>\n'
+					for j in range(num_columnas):
+						encontrado = False
+						for k in range(num_filas * num_columnas):
+							clave_elemento = f'elemento{k}'
+							celda = self.atributos.get(clave_elemento, {})
+							fila_celda = int(celda.get('fila', '0')) - 1
+							columna_celda = int(celda.get('columna', '0')) - 1
+							if fila_celda == i and columna_celda == j:
+								contenido = celda.get('contenido', '')
+								tabla_html += f'<td>{contenido}</td>\n'
+								encontrado = True
+								break
+						if not encontrado:
+							tabla_html += '<td></td>\n'
+					tabla_html += '</tr>\n'
+
+				tabla_html += '</table>'
+				etiqueta = tabla_html
 		return etiqueta

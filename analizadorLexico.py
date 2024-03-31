@@ -528,19 +528,19 @@ class Analizador():
                 e = Etiqueta(nombreEtiqueta)
                 e.atributos = diccionario
                 name = ""
-                if nombreEtiqueta != "Tabla":
-                    if nombreEtiqueta != "Salto":
-                        et = e.crearEtiquetahtml()
-                    else:
-                        cantidad = int(e.atributos["cantidad"])
-                        nombreEtiqueta = "<br>"*cantidad
-                        name = "Salto"
+                if nombreEtiqueta != "Salto":
+                    et = e.crearEtiquetahtml()
+                else:
+                    cantidad = int(e.atributos["cantidad"])
+                    nombreEtiqueta = "<br>"*cantidad
+                    name = "Salto"
+                
+                if name == "Salto":
+                    self.etiquetas.append(nombreEtiqueta)
+                    name = ""
+                else:
+                    self.etiquetas.append(et)
                     
-                    if name == "Salto":
-                        self.etiquetas.append(nombreEtiqueta)
-                        name = ""
-                    else:
-                        self.etiquetas.append(et)
                 listado = listado[posiciones+1:]
                 posiciones = 0
                 numerador = 0
@@ -565,7 +565,7 @@ class Analizador():
                     archivo.write(f'body'+ " {" + "\n\t" + i + "\n" + "}" + "\n")
                     archivo.write(f'.codigo'+ " {" + "\n\t" + "background-color: black;" + "\n\t" + "text-align: center;" + "\n\t" + "padding: 3px;" + "\n" +"}")
             else:
-                self.html += i + "\n" 
+                self.html += i + "\n"
         
         self.html += f'</body>\n'
         self.html += f'</html>\n'
@@ -616,6 +616,9 @@ class Analizador():
         cuerpo.append("]")
         self.crearEtiquetas(cuerpo)
         
-        # creando html
-        self.exportandoEtiquetas(encabezado[2]) 
+        # traduciendo y creando HTML
+        self.exportandoEtiquetas(encabezado[2])
+        
+        # retornando mensaje de exito
+        return "Archivo generado con exito", self.html
     

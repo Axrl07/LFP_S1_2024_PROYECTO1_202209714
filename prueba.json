@@ -20,6 +20,7 @@ Inicio:{
             fuente="Arial";
             color="azul";
             tamaño="11";
+            texto="Este es un texto de ejemplo con formato";
         },
         Codigo:{
             texto:"Muestra el texto con fuente de codigo de ordenador.";
@@ -48,9 +49,10 @@ Inicio:{
             elemento:{"fila":"1","columna":"3","Texto mostrado en fila 1 columna 3"};
         },
         Texto:{
-            fuente="Arial";
-            color="azul";
-            tamaño="11";
+            fuente="times new roman";
+            color="amarillo";
+            tamaño="2";
+            texto="Este es un texto de ejemplo con pero otro";
         },
         Codigo:{
             texto:"Muestra el texto con fuente de codigo de ordenador.";
@@ -62,7 +64,7 @@ Inicio:{
         Titulo:{
             texto:"Este es un titulo";
             posicion:"izquierda";
-            tamaño:"t1";
+            tamaño:"t4";
             color:"rojo";
         }
     ]

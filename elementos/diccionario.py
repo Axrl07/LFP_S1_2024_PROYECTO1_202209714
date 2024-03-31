@@ -40,3 +40,35 @@ reservadas = {
     ']'                   :   ']',
     ','                   :   ','
 }
+
+traduccion = {
+    'TITULO'               :   'h',
+    'FONDO'                :   'body',
+    'PARRAFO'              :   'p',
+    'TEXTO'                :   'p',
+    'CODIGO'               :   'code',
+    'SALTO'                :   'br',
+    'TABLA'                :   'table',
+    'NEGRITA'              :   'br',
+    'CURSIVA'              :   'em',
+    'TACHADO'              :   'del',
+    'SUBRAYADO'            :   'u',
+    # elementos internos
+    'POSICION'             :   'align',
+    'TAMAÃ±O'               :   'size',
+    'COLOR'                :   'color',
+    'FUENTE'               :   'font',
+    'IZQUIERDA'           :   'left',
+    'CENTRO'              :   'center',
+    'DERECHA'             :   'right',
+    'AZUL'         :   'blue',
+    'ROJO'         :   'red',
+    'AMARILLO'        :   'yellow',
+    # elementos de tabla
+    'FILA'               :   'row',
+    'COLUMNA'            :   'column',
+    'ELEMENTO'             :   'elemento',
+    'CANTIDAD'             :    'cantidad',
+    'FILAS'              :   'filas',
+    'COLUMNAS'           :   'columnas',
+}

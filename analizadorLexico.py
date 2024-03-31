@@ -454,6 +454,8 @@ class Analizador():
         diccionario = {}
         nombreEtiqueta = ""
         nombreAtributo = ""
+        etiqueta = ""
+        css = ""
         posiciones = 0
         numerador = 0
         valores = []
@@ -510,6 +512,7 @@ class Analizador():
                         listado = listado[posiciones+2:]
                         posiciones = 0
                     elif reservadas.get(actual.upper(),None)[0].islower():
+                        
                         nombreAtributo = actual
                         listado = listado[posiciones+1:]
                         posiciones = 0
@@ -524,8 +527,20 @@ class Analizador():
             else:
                 e = Etiqueta(nombreEtiqueta)
                 e.atributos = diccionario
-                self.etiquetas.append(e)
-                
+                name = ""
+                if nombreEtiqueta != "Tabla":
+                    if nombreEtiqueta != "Salto":
+                        et = e.crearEtiquetahtml()
+                    else:
+                        cantidad = int(e.atributos["cantidad"])
+                        nombreEtiqueta = "<br>"*cantidad
+                        name = "Salto"
+                    
+                    if name == "Salto":
+                        self.etiquetas.append(nombreEtiqueta)
+                        name = ""
+                    else:
+                        self.etiquetas.append(et)
                 listado = listado[posiciones+1:]
                 posiciones = 0
                 numerador = 0
@@ -533,13 +548,29 @@ class Analizador():
                 valores = []
     
     def exportandoEtiquetas(self, head):
+        # for i in self.etiquetas:
+        #     print(i)
         self.html += f'<!DOCTYPE html>\n'
         self.html += f'<html>\n'
-        self.html += head
-        self.html += "AQUI VA TODO EL CONTENIDO"
+        self.html += f'<head>\n'
+        self.html += f'<title>{head}</title>\n'
+        self.html += f'<link rel="stylesheet" type="text/css" href="estilos.css">\n'
+        self.html += f'</head>\n'
+        self.html += f'<body>\n'
+        
+        for i in self.etiquetas:
+            if i[0] != "<":
+                nombre = "estilos"+".css"
+                with open(nombre, 'w') as archivo:
+                    archivo.write(f'body'+ " {" + "\n\t" + i + "\n" + "}" + "\n")
+                    archivo.write(f'.codigo'+ " {" + "\n\t" + "background-color: black;" + "\n\t" + "text-align: center;" + "\n\t" + "padding: 3px;" + "\n" +"}")
+            else:
+                self.html += i + "\n" 
+        
         self.html += f'</body>\n'
         self.html += f'</html>\n'
-        print(self.html)
+        nombre = "pagina"+".html"
+        open(nombre, 'w').write(self.html)
     
     # funcion de ejecucion
     def progreso(self, cadena) -> Union[List, str, Tuple[str, List]]:
@@ -586,6 +617,5 @@ class Analizador():
         self.crearEtiquetas(cuerpo)
         
         # creando html
-        self.exportandoEtiquetas(f'<head>\n<title>{encabezado[2]}</title>\n</head>\n<body>\n')
-
+        self.exportandoEtiquetas(encabezado[2]) 
     

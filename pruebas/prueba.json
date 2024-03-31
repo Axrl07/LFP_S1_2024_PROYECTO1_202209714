@@ -42,7 +42,11 @@ Inicio:{
             cantidad:"5";
         },
         Tabla:{
+            elemento:{"fila":"4","columna":"3","Texto mostrado en fila 4 columna 3"};
+            elemento:{"fila":"3","columna":"1","Texto mostrado en fila 3 columna 1"};
             filas:"4";
+            elemento:{"fila":"2","columna":"1","Texto mostrado en fila 2 columna 1"};
+            elemento:{"fila":"2","columna":"2","Texto mostrado en fila 2 columna 2"};
             columnas:"3";
             elemento:{"fila":"1","columna":"1","Texto mostrado en fila 1 columna 1"};
             elemento:{"fila":"1","columna":"2","Texto mostrado en fila 1 columna 2"};

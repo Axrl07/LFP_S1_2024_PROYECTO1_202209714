@@ -1,0 +1,19 @@
+digraph G {
+    rankdir=LR;
+    node [shape=circle];
+    q0 [shape=doublecircle];  // Estado de inicio
+    q9 [shape=doublecircle];  // Estado de aceptación
+    
+    q0 -> q2 [label="palabra reservada"];
+    q2 -> q3 [label=":"];
+    q3 -> q4 [label="{|["];
+    q4 -> q2 [label="palabra reservada"];
+    q4 -> q5 [label="palabra reservada interna"];
+    q5 -> q6 [label=":|="];
+    q6 -> q7 [label="\"(a-zA-Z)\""];
+    q7 -> q8 [label=";|,"];
+    q8 -> q5 [label="palabra reservada interna"];
+    q8 -> q9 [label="]|}"];
+    q9 -> q10 [label=","];
+    q10 -> q2 [label="palabra reservada"];
+}

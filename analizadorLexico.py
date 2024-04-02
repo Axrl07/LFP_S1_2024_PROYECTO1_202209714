@@ -132,7 +132,10 @@ class Analizador():
             elif caracter.isdigit():
                 lexema, cadena = self.armar_lexema(cadena[puntero-1:],2)
                 if lexema and cadena:
-                    valor = int(lexema)
+                    if len(lexema) == 6:
+                        valor = lexema
+                    else:
+                        valor = int(lexema)
                     columna += len(lexema) + 1
                     puntero = 0
             else:

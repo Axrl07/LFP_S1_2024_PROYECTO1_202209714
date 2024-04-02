@@ -51,7 +51,7 @@ class Ventana():
         
     def abrir_explorador(self):
         filepath = filedialog.askopenfilename(initialdir="/", title="Selecciona un archivo",
-                                              filetypes=(("Archivos de texto", "*.json"), 
+                                              filetypes=(("Archivos de texto", "*.json"), ("Archivos de texto", "*.lfp"),
                                                          ("Todos los archivos", "*.*")))
         self.data = [filepath, filepath.split("/")[-1], open(filepath, "r").read()]
         self.area_entrada.delete("1.0", "end")

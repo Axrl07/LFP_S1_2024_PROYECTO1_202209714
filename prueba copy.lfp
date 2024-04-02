@@ -1,0 +1,75 @@
+Inicio:{
+    Encabezado:{
+            TituloPagina:"Ejemplo titulo";
+        },
+    Cuerpo:[
+        Titulo:{
+            texto:"Este es un titulo";
+            posicion:"izquierda";
+            tamaño:"t1";
+            color:"rojo";
+        },
+        Fondo:{
+            color:"#F7F2B8";
+        },
+        Parrafo:{
+            texto:"Este es un parrafo de ejemplo.";
+            posicion:"izquierda";
+        },
+        Texto:{
+            fuente="Arial";
+            color="#9EA938";
+            tamaño="11";
+            texto="Este es un texto de ejemplo con formato";
+        },
+        Codigo:{
+            texto:"Muestra el texto con fuente de codigo de ordenador.";
+            posicion:"centro";
+        },
+        Negrita:{
+            texto:"Este texto aparecerá en negrita.";
+        },
+        Subrayado:{
+            texto:"Este texto aparecerá Subrayado.";
+        },
+        Tachado:{
+            texto:"Este texto aparecerá tachado.";
+        },
+        Cursiva:{
+            texto:"Este texto aparecerá en cursiva.";
+        },
+        Salto:{
+            cantidad:"5";
+        },
+        Tabla:{
+            elemento:{"fila":"4","columna":"3","Texto mostrado en fila 4 columna 3"};
+            elemento:{"fila":"3","columna":"1","Texto mostrado en fila 3 columna 1"};
+            filas:"4";
+            elemento:{"fila":"2","columna":"1","Texto mostrado en fila 2 columna 1"};
+            elemento:{"fila":"2","columna":"2","Texto mostrado en fila 2 columna 2"};
+            columnas:"3";
+            elemento:{"fila":"1","columna":"1","Texto mostrado en fila 1 columna 1"};
+            elemento:{"fila":"1","columna":"2","Texto mostrado en fila 1 columna 2"};
+            elemento:{"fila":"1","columna":"3","Texto mostrado en fila 1 columna 3"};
+        },
+        Texto:{
+            fuente="times new roman";
+            color="amarillo";
+            tamaño="2";
+            texto="Este es un texto de ejemplo con pero otro";
+        },
+        Codigo:{
+            texto:"Muestra el texto con fuente de codigo de ordenador.";
+            posicion:"centro";
+        },
+        Negrita:{
+            texto:"Este texto aparecerá en negrita.";
+        },
+        Titulo:{
+            texto:"Este es un titulo";
+            posicion:"izquierda";
+            tamaño:"t4";
+            color:"rojo";
+        }
+    ]
+}

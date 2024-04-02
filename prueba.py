@@ -1,7 +1,7 @@
 
 # from analizadorLexico import Analizador
 
-# contenido = open("prueba.json", "r").read()
+# contenido = open("prueba copy.lfp", "r").read()
 # x = Analizador().progreso(contenido)
 # tipo = type(x)
 

@@ -1,25 +1,25 @@
 Inicio:{
     Encabezado:{
-            TituloPagina:"Ejemplo titulo";
+            TituloPagina:"MI PRIMER PAGINA";
         },
     Cuerpo:[
         Titulo:{
-            texto:"Este es un titulo";
-            posicion:"izquierda";
-            tamaño:"t1";
-            color:"rojo";
+            texto:"La biologia como una ciencia";
+            posicion:"centro";
+            tamaño:"t2";
+            color:"amarillo";
         },
         Fondo:{
             color:"#F7F2B8";
         },
         Parrafo:{
-            texto:"Este es un parrafo de ejemplo.";
-            posicion:"izquierda";
+            texto:"Este es un parrafo de ejemplo. BLABLABLABLA";
+            posicion:"derecha";
         },
         Texto:{
             fuente="Arial";
             color="#9EA938";
-            tamaño="11";
+            tamaño="5";
             texto="Este es un texto de ejemplo con formato";
         },
         Codigo:{
@@ -39,7 +39,7 @@ Inicio:{
             texto:"Este texto aparecerá en cursiva.";
         },
         Salto:{
-            cantidad:"5";
+            cantidad:"10";
         },
         Tabla:{
             elemento:{"fila":"4","columna":"3","Texto mostrado en fila 4 columna 3"};
@@ -55,12 +55,12 @@ Inicio:{
         Texto:{
             fuente="times new roman";
             color="amarillo";
-            tamaño="2";
+            tamaño="12";
             texto="Este es un texto de ejemplo con pero otro";
         },
         Codigo:{
             texto:"Muestra el texto con fuente de codigo de ordenador.";
-            posicion:"centro";
+            posicion:"derecha";
         },
         Negrita:{
             texto:"Este texto aparecerá en negrita.";
@@ -68,8 +68,8 @@ Inicio:{
         Titulo:{
             texto:"Este es un titulo";
             posicion:"izquierda";
-            tamaño:"t4";
-            color:"rojo";
+            tamaño:"t1";
+            color:"azul";
         }
     ]
 }

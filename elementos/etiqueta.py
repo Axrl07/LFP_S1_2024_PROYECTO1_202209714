@@ -15,6 +15,11 @@ class Etiqueta():
 					etiqueta = f'<h{self.atributos.get(i,None)[1]}' + etiquetafinal
 				elif i == "texto":
 					contenido = self.atributos[i]
+				elif i == "color":
+					if len(self.atributos[i]) == 7:
+						etiqueta += '><font color'+ '="' + self.atributos[i] + '"> '
+					else:
+						etiqueta += '><font color'+ '="' + traduccion.get(self.atributos[i].upper(),None) + '"> '
 				else:
 					valor = traduccion.get(self.atributos[i].upper(),None)
 					atr = traduccion.get(i.upper(),None)
@@ -22,15 +27,15 @@ class Etiqueta():
 						etiqueta += atr + '="' + valor + '" '
 					else:
 						etiqueta += atr + '="' + self.atributos[i] + '" '
-			etiqueta += ">" + contenido + "</" + etiqueta[1:3] + ">"
+			etiqueta += contenido + "</font>" + "</" + etiqueta[1:3] + ">"
 		elif self.nombre == "Negrita":
 			etiqueta = "<b>"
 			contenido = self.atributos["texto"]
 			etiqueta += contenido + "</b>"
 		elif self.nombre == "Cursiva":
-			etiqueta = "<u>"
+			etiqueta = "<i>"
 			contenido = self.atributos["texto"]
-			etiqueta += contenido + "</u>"
+			etiqueta += contenido + "</i>"
 		elif self.nombre == "Subrayado":
 			etiqueta = "<u>"
 			contenido = self.atributos["texto"]
@@ -40,18 +45,21 @@ class Etiqueta():
 			contenido = self.atributos["texto"]
 			etiqueta += contenido + "</del>"
 		elif self.nombre == "Codigo":
+			alineacion = ""
 			etiqueta = f'<code class="codigo" '
 			for i in self.atributos:
 				if i == "texto":
 					contenido = self.atributos[i]
+				elif i == "posicion":
+					alineacion = traduccion.get(self.atributos[i].upper(),None)
 				else:
 					valor = traduccion.get(self.atributos[i].upper(),None)
 					atr = traduccion.get(i.upper(),None)
 					if valor != None:
 						etiqueta += atr + '="' + valor + '" '
 					else:
-						etiqueta += atr + '="' + self.atributos[i] + '" '
-			etiqueta += ">" + '<font color="white" face="Hurmit Nerd font light">' + contenido + "</font>" +"</code>"
+						etiqueta += atr + '="' + traduccion.get(self.atributos[i],None) + '" '
+			etiqueta += f'><font align="{alineacion}">' + contenido + "</font></code>"
 		elif self.nombre == "Texto":
 			etiqueta = "<" + traduccion.get(self.nombre.upper(),None) + "> "
 			contador = 0
@@ -65,7 +73,10 @@ class Etiqueta():
 				elif atributo == "fuente":
 					etiqueta += 'face'+ '="' + self.atributos[atributo] + '" '
 				elif atributo == "color":
-					etiqueta += 'color'+ '="' + self.atributos[atributo] + '" '
+					if len(self.atributos[atributo]) == 7:
+						etiqueta += 'color'+ '="' + self.atributos[atributo] + '" '
+					else:
+						etiqueta += 'color'+ '="' + traduccion.get(self.atributos[atributo].upper(),None) + '" '
 				else:
 					lista = list(self.atributos.keys())
 					value = traduccion.get(self.atributos[atributo].upper(),None)

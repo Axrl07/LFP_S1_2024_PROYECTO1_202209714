@@ -50,7 +50,7 @@ traduccion = {
     'SALTO'                :   'br',
     'TABLA'                :   'table',
     'NEGRITA'              :   'br',
-    'CURSIVA'              :   'em',
+    'CURSIVA'              :   'i',
     'TACHADO'              :   'del',
     'SUBRAYADO'            :   'u',
     # elementos internos
@@ -64,6 +64,7 @@ traduccion = {
     'AZUL'         :   'blue',
     'ROJO'         :   'red',
     'AMARILLO'        :   'yellow',
+    'BLANCO'        :   'white',
     # elementos de tabla
     'FILA'               :   'row',
     'COLUMNA'            :   'column',

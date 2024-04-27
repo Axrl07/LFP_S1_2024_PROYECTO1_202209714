@@ -11,7 +11,7 @@ class Errores(Expression):
         lexema = f'<td align="center">{self.caracter}</td>\n'
         fila = f'<td align="center">{self.fila}</td>\n'
         columna = f'<td align="center">{self.columna}</td>\n'
-        return f'{numero + lexema + columna + fila}'
+        return f'{numero + lexema + fila + columna}'
     
     def getFila(self):
         return super().getFila()

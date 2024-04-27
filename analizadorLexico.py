@@ -40,7 +40,7 @@ class Analizador():
                     if i == self.listadoLexemas_sinRepetir[-1]:
                         if l.lexema != i.lexema:
                             self.listadoLexemas_sinRepetir.append(l)
-                lexema, cadena = self.armar_lexema(cadena[puntero:])
+                lexema, cadena = self.armar_lexema(cadena[puntero:],3)
                 if lexema and cadena:
                     lex = Lexema(f'"{lexema}"', self.nLinea, self.nColumna)
                     self.listadoLexemas.append(lex)
@@ -154,6 +154,13 @@ class Analizador():
                     return lexema, cadena[len(puntero):]
                 elif caracter == ':' or caracter == '=':
                     return lexema, cadena[len(puntero)-1:]
+                else:
+                    lexema += caracter
+        elif analisis == 3:
+            for caracter in cadena:
+                puntero += caracter
+                if caracter == '\"':
+                    return lexema, cadena[len(puntero):]
                 else:
                     lexema += caracter
         else:
@@ -342,8 +349,8 @@ class Analizador():
         formato += '<tr bgcolor="black">\n'
         formato += '<th><font color="white">Token</font</th>\n'
         formato += '<th><font color="white">Lexema</font</th>\n'
-        formato += '<th><font color="white">Fila</font</th>\n'
         formato += '<th><font color="white">Columna</font</th>\n'
+        formato += '<th><font color="white">Fila</font</th>\n'
         formato += '</tr>\n' 
         for i in range(len(self.listadoTokens)):
             formato += '<tr>\n'
@@ -566,7 +573,7 @@ class Analizador():
                 nombre = "estilos"+".css"
                 with open(nombre, 'w') as archivo:
                     archivo.write(f'body'+ " {" + "\n\t" + i + "\n" + "}" + "\n")
-                    archivo.write(f'.codigo'+ " {" + "\n\t" + "background-color: black;" + "\n\t" + "text-align: center;" + "\n\t" + "padding: 3px;" + "\n" +"}")
+                    archivo.write(f'.codigo'+ " {" + "\n\t" + "text-align: center;" + "\n\t" + "font-family: JetBrains Mono;" + "\n" +"}")
             else:
                 self.html += i + "\n"
         
